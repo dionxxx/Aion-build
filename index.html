@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>AION — Autonomous Business Operating System</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">A</div>
+        <div class="brand-text">
+          <div class="brand-name">AION</div>
+          <div class="brand-sub">Autonomous Business<br/>Operating System</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-group">
+          <div class="nav-label">Operate</div>
+          <button class="nav-item active" data-view="home">🏠 Home</button>
+          <button class="nav-item" data-view="live">🅰️ AION Live <span class="live-dot"></span></button>
+          <button class="nav-item" data-view="conversations">💬 Conversations</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">Business</div>
+          <button class="nav-item" data-view="business">💼 Business</button>
+          <button class="nav-item" data-view="leads">👥 Leads</button>
+          <button class="nav-item" data-view="content">📄 Content</button>
+          <button class="nav-item" data-view="website">🌐 Website</button>
+          <button class="nav-item" data-view="analytics">📊 Analytics</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">Workforce</div>
+          <button class="nav-item" data-view="specialists">👤 Specialists</button>
+          <button class="nav-item" data-view="missions">🎯 Missions</button>
+          <button class="nav-item" data-view="activity">📈 Activity</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">System</div>
+          <button class="nav-item" data-view="integrations">🔗 Integrations</button>
+          <button class="nav-item" data-view="permissions">🛡️ Permissions</button>
+          <button class="nav-item" data-view="settings">⚙️ Settings</button>
+        </div>
+      </nav>
+
+      <div class="account">
+        <div class="account-avatar">B</div>
+        <div class="account-info">
+          <div class="account-name" id="accountName">Your Business</div>
+          <div class="account-sub">Business Account</div>
+        </div>
+        <span class="chev">⌄</span>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
+        <div class="search-bar" id="topSearchTrigger">
+          <span class="search-icon">✦</span>
+          <span class="search-placeholder">Ask AION anything…</span>
+          <span class="kbd">Ctrl + K</span>
+        </div>
+        <div class="topbar-right">
+          <div class="status-pill" id="connectionBadge">
+            <span class="dot dot-pending"></span>
+            <div class="status-text">
+              <span class="status-title">AION Live</span>
+              <span class="status-sub" id="connectionText">Checking…</span>
+            </div>
+          </div>
+          <button class="icon-btn" title="Notifications">🔔</button>
+          <div class="account-avatar small">B</div>
+        </div>
+      </header>
+
+      <!-- VIEW: HOME / LIVE -->
+      <section class="view" id="view-home">
+        <div class="live-grid">
+
+          <div class="chat-column">
+            <div class="chat-header">
+              <div class="chat-header-mark">A</div>
+              <div>
+                <div class="chat-title">AION Live</div>
+                <div class="chat-sub">Business Command Center</div>
+              </div>
+            </div>
+
+            <div class="panel chat-panel">
+              <div class="chat-log" id="chatLog"></div>
+
+              <form class="composer" id="composerForm">
+                <span class="composer-icon">✦</span>
+                <input
+                  type="text"
+                  id="composerInput"
+                  placeholder="Type your objective or ask AION anything…"
+                  autocomplete="off"
+                />
+                <button type="submit" id="sendBtn" aria-label="Send">➤</button>
+              </form>
+              <div class="composer-toolbar">
+                <button class="toolbar-chip" id="voiceBtn" type="button" title="Real-time voice arrives once Gemini Live is wired in">🎙️ Voice</button>
+                <span class="toolbar-chip pill" id="geminiPill"><span class="dot dot-pending"></span> Checking Gemini…</span>
+                <span class="toolbar-spacer"></span>
+                <button class="toolbar-icon" type="button" title="Attach">📎</button>
+                <button class="toolbar-icon" type="button" title="Options">⚙️</button>
+                <button class="toolbar-icon" type="button" title="Expand">⤢</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-panel">
+
+            <div class="ops-head">
+              <span>Operations</span>
+              <button class="icon-btn small" id="refreshOps" title="Refresh">⟳</button>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <span>🎯 Current Objective</span>
+                <span class="badge" id="execStateBadge">—</span>
+              </div>
+              <div class="card-body" id="objectiveBody">
+                <div class="muted">No active outcome yet. Tell AION what you want to accomplish.</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><span>👥 Lead Pipeline</span></div>
+              <div class="card-body">
+                <div class="stat-row"><span>Qualified Leads</span><strong>0</strong></div>
+                <div class="stat-row"><span>Appointments</span><strong>0</strong></div>
+                <div class="muted small">Live updates · No data yet — real leads arrive once a connected source exists (Milestone 3–4).</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <span>⚙️ Specialist Workforce</span>
+              </div>
+              <div class="card-body">
+                <div class="workforce-summary" id="workforceSummary">0/8 Active</div>
+                <ul class="workforce-list" id="workforceList"></ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <span>Business State</span>
+                <span class="badge badge-muted">Milestone 1</span>
+              </div>
+              <div class="card-body">
+                <div class="biz-row">
+                  <div class="account-avatar tiny">B</div>
+                  <div>
+                    <div style="font-weight:600;" id="bizName">Your Business</div>
+                    <div class="muted small">Business Account</div>
+                  </div>
+                </div>
+                <div class="stat-row-triple">
+                  <div><strong>0</strong><span class="muted small">Leads</span></div>
+                  <div><strong>0</strong><span class="muted small">Appointments</span></div>
+                  <div><strong>—</strong><span class="muted small">Growth</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="proposed-plan-card card">
+              <div class="card-head"><span>Proposed Plan</span></div>
+              <div class="card-body" id="planBody">
+                <div class="muted">All steps stay PLANNED until Milestone 3 gives specialists the ability to actually run them.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- PLACEHOLDER VIEWS -->
+      <section class="view hidden" id="view-placeholder">
+        <div class="panel placeholder-panel">
+          <div class="placeholder-icon">◐</div>
+          <h2 id="placeholderTitle">Coming Soon</h2>
+          <p id="placeholderText" class="muted">This area isn't built yet.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="mobile-tabs" id="mobileTabs">
+    <button class="mtab active" data-view="home"><span>🏠</span>Home</button>
+    <button class="mtab" data-view="live"><span>🅰️</span>AION Live</button>
+    <button class="mtab" data-view="conversations"><span>💬</span>Conversations</button>
+    <button class="mtab" id="moreTab"><span>☰</span>More</button>
+  </nav>
+
+  <div class="mobile-drawer-backdrop" id="drawerBackdrop"></div>
+
+  <script src="workforce.js"></script>
+  <script src="mission.js"></script>
+  <script src="brain.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
