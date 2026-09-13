@@ -1,11 +1,7 @@
 // brain.js
-// Client-side half of the Brain/Governor loop. Holds conversation state in memory
-// (persistence across sessions is Milestone 2) and talks to the secure Netlify function,
-// which is the only thing that ever touches the Gemini API key.
-
 const AionBrain = {
   ENDPOINT: "/.netlify/functions/Aion",
-  BUSINESS_ID: "local-preview-business", // replaced by real business identity in Milestone 2
+  BUSINESS_ID: "local-preview-business",
   history: [],
   busy: false,
 
@@ -13,13 +9,11 @@ const AionBrain = {
     const topDot = document.querySelector("#connectionBadge .dot");
     const topText = document.getElementById("connectionText");
     const pill = document.getElementById("geminiPill");
-
     const setState = (dotClass, topLabel, pillLabel) => {
       topDot.className = "dot " + dotClass;
       topText.textContent = topLabel;
       pill.innerHTML = `<span class="dot ${dotClass}"></span> ${pillLabel}`;
     };
-
     try {
       const res = await fetch(this.ENDPOINT, { method: "GET" });
       const data = await res.json();
@@ -39,11 +33,9 @@ const AionBrain = {
     if (this.busy || !message.trim()) return;
     this.busy = true;
     setComposerBusy(true);
-
     appendMessage("user", message);
     this.history.push({ role: "user", text: message });
     const typingEl = appendTyping();
-
     try {
       const res = await fetch(this.ENDPOINT, {
         method: "POST",
@@ -54,16 +46,16 @@ const AionBrain = {
           history: this.history.slice(0, -1)
         })
       });
-
       const data = await res.json();
       typingEl.remove();
-
       if (!res.ok || !data.ok) {
         const errText = data && data.error ? data.error : "I hit a problem while working on that. Your work is safe.";
-        appendMessage("error", errText);
+        const extra = data && (data.status || data.detail || data.errorType)
+          ? ` [${data.errorType || ""} ${data.status || ""}] ${data.detail || ""}`
+          : "";
+        appendMessage("error", errText + extra);
         return;
       }
-
       appendMessage("aion", data.reply);
       this.history.push({ role: "model", text: data.reply });
       AionMissionView.update(data);
