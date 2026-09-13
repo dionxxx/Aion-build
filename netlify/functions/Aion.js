@@ -3,7 +3,7 @@
 // Milestone 1 scope: genuine Gemini reasoning + truthful execution states.
 // No real tool execution, no persistence, no specialist runtime yet — those are M2–M4.
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash-exp";
 const MAX_RETRIES = 3;
 const RETRY_DELAYS_MS = [400, 900, 1600]; // backoff for transient overload/rate-limit only
 
