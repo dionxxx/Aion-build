@@ -49,11 +49,10 @@ const AionBrain = {
       const data = await res.json();
       typingEl.remove();
       if (!res.ok || !data.ok) {
+        // Clean, client-safe error text only — full detail is in Netlify's
+        // function logs (console.error in Aion.js), never shown to the user.
         const errText = data && data.error ? data.error : "I hit a problem while working on that. Your work is safe.";
-        const extra = data && (data.status || data.detail || data.errorType)
-          ? ` [${data.errorType || ""} ${data.status || ""}] ${data.detail || ""}`
-          : "";
-        appendMessage("error", errText + extra);
+        appendMessage("error", errText);
         return;
       }
       appendMessage("aion", data.reply);
