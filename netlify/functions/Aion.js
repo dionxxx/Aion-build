@@ -3,7 +3,9 @@
 // Milestone 1 scope: genuine Gemini reasoning + truthful execution states.
 // No real tool execution, no persistence, no specialist runtime yet — those are M2–M4.
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
+const MAX_RETRIES = 3;
+const RETRY_DELAYS_MS = [400, 900, 1600]; // backoff for transient overload/rate-limit only
 
 const SYSTEM_INSTRUCTION = `You are AION — an outcome-driven Autonomous Business Operating System.
 
@@ -61,6 +63,43 @@ function jsonResponse(statusCode, body) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   };
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Calls Gemini, automatically retrying on transient overload (503) or rate limit (429).
+// Any other status is returned immediately — no point retrying a 400 or 404.
+async function callGeminiWithRetry(url, requestBody) {
+  let lastRes = null;
+  let lastNetworkErr = null;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (res.ok) return { res, networkErr: null };
+
+      lastRes = res;
+      const transient = res.status === 503 || res.status === 429;
+      if (!transient || attempt === MAX_RETRIES) {
+        return { res, networkErr: null };
+      }
+      await sleep(RETRY_DELAYS_MS[attempt] || 1600);
+    } catch (networkErr) {
+      lastNetworkErr = networkErr;
+      if (attempt === MAX_RETRIES) {
+        return { res: null, networkErr };
+      }
+      await sleep(RETRY_DELAYS_MS[attempt] || 1600);
+    }
+  }
+  return { res: lastRes, networkErr: lastNetworkErr };
 }
 
 exports.handler = async (event) => {
@@ -123,14 +162,10 @@ exports.handler = async (event) => {
     }
   };
 
-  let geminiRes;
-  try {
-    geminiRes = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody)
-    });
-  } catch (networkErr) {
+  const { res: geminiRes, networkErr } = await callGeminiWithRetry(url, requestBody);
+
+  if (networkErr || !geminiRes) {
+    console.error("AION/Gemini network error after retries:", networkErr);
     return jsonResponse(502, {
       ok: false,
       errorType: "GEMINI_UNREACHABLE",
@@ -141,12 +176,16 @@ exports.handler = async (event) => {
   if (!geminiRes.ok) {
     let detail = "";
     try { detail = await geminiRes.text(); } catch (e) {}
+    console.error(`AION/Gemini error ${geminiRes.status} after retries:`, detail.slice(0, 1000));
+
+    const overloaded = geminiRes.status === 503 || geminiRes.status === 429;
     return jsonResponse(502, {
       ok: false,
-      errorType: "GEMINI_ERROR",
-      error: "AI reasoning unavailable — the model returned an error.",
-      status: geminiRes.status,
-      detail: detail.slice(0, 500)
+      errorType: overloaded ? "GEMINI_OVERLOADED" : "GEMINI_ERROR",
+      error: overloaded
+        ? "AION's reasoning service is briefly overloaded. Please try again in a moment."
+        : "AI reasoning unavailable — the model returned an error.",
+      status: geminiRes.status
     });
   }
 
