@@ -10,7 +10,6 @@
 
   <div class="shell">
 
-    <!-- SIDEBAR (desktop) -->
     <aside class="sidebar" id="sidebar">
       <div class="brand">
         <div class="brand-mark">A</div>
@@ -24,7 +23,7 @@
         <div class="nav-group">
           <div class="nav-label">Operate</div>
           <button class="nav-item active" data-view="home">🏠 Home</button>
-          <button class="nav-item" data-view="live">🅰️ AION Live <span class="live-dot"></span></button>
+          <button class="nav-item" data-view="live">🆰️ AION Live <span class="live-dot"></span></button>
           <button class="nav-item" data-view="conversations">💬 Conversations</button>
         </div>
         <div class="nav-group">
@@ -59,10 +58,8 @@
       </div>
     </aside>
 
-    <!-- MAIN -->
     <main class="main">
 
-      <!-- TOPBAR -->
       <header class="topbar">
         <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
         <div class="search-bar" id="topSearchTrigger">
@@ -83,7 +80,6 @@
         </div>
       </header>
 
-      <!-- VIEW: HOME / LIVE -->
       <section class="view" id="view-home">
         <div class="live-grid">
 
@@ -138,6 +134,13 @@
             </div>
 
             <div class="card">
+              <div class="card-head"><span>🧠 What AION Knows</span></div>
+              <div class="card-body" id="factsBody">
+                <div class="muted">Nothing saved yet — facts AION learns about your business will persist here across sessions.</div>
+              </div>
+            </div>
+
+            <div class="card">
               <div class="card-head"><span>👥 Lead Pipeline</span></div>
               <div class="card-body">
                 <div class="stat-row"><span>Qualified Leads</span><strong>0</strong></div>
@@ -159,7 +162,7 @@
             <div class="card">
               <div class="card-head">
                 <span>Business State</span>
-                <span class="badge badge-muted">Milestone 1</span>
+                <span class="badge badge-muted">Milestone 2</span>
               </div>
               <div class="card-body">
                 <div class="biz-row">
@@ -188,7 +191,6 @@
         </div>
       </section>
 
-      <!-- PLACEHOLDER VIEWS -->
       <section class="view hidden" id="view-placeholder">
         <div class="panel placeholder-panel">
           <div class="placeholder-icon">◐</div>
@@ -200,10 +202,9 @@
     </main>
   </div>
 
-  <!-- MOBILE BOTTOM NAV -->
   <nav class="mobile-tabs" id="mobileTabs">
     <button class="mtab active" data-view="home"><span>🏠</span>Home</button>
-    <button class="mtab" data-view="live"><span>🅰️</span>AION Live</button>
+    <button class="mtab" data-view="live"><span>🆰️</span>AION Live</button>
     <button class="mtab" data-view="conversations"><span>💬</span>Conversations</button>
     <button class="mtab" id="moreTab"><span>☰</span>More</button>
   </nav>
