@@ -1,9 +1,4 @@
 // workforce.js
-// Static roster of the specialist workforce AION will eventually delegate to.
-// Milestone 1: display only. No specialist actually runs yet — that's Milestone 3.
-// Visual treatment matches the reference design (dot + right-aligned status),
-// but the status text stays truthful: "Not active" rather than fake "Scanning/Online".
-
 const AION_WORKFORCE_ROSTER = [
   { id: "research", name: "Research Agent" },
   { id: "prospecting", name: "Prospecting Agent" },
@@ -14,7 +9,6 @@ const AION_WORKFORCE_ROSTER = [
   { id: "sales", name: "Follow-up / Sales Agent" },
   { id: "analytics", name: "Analytics Agent" }
 ];
-
 function renderWorkforceRoster() {
   const list = document.getElementById("workforceList");
   const summary = document.getElementById("workforceSummary");
