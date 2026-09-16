@@ -1,10 +1,9 @@
 // brain.js
 const AionBrain = {
-  ENDPOINT: "/.netlify/functions/Aion",
+  ENDPOINT: "/api/Aion",
   BUSINESS_ID: "local-preview-business",
   history: [],
   busy: false,
-
   async checkConnection() {
     const topDot = document.querySelector("#connectionBadge .dot");
     const topText = document.getElementById("connectionText");
@@ -18,7 +17,7 @@ const AionBrain = {
       const res = await fetch(this.ENDPOINT, { method: "GET" });
       const data = await res.json();
       if (res.ok && data.ok && data.geminiConfigured) {
-        setState("dot-ok", "Online · M1", "Gemini Connected");
+        setState("dot-ok", "Online · M2", "Gemini Connected");
       } else if (res.ok && data.ok && !data.geminiConfigured) {
         setState("dot-error", "Key missing", "Gemini not configured");
       } else {
@@ -28,7 +27,34 @@ const AionBrain = {
       setState("dot-error", "Unreachable", "Backend unreachable");
     }
   },
-
+  async loadSavedState(onEmptyCallback) {
+    try {
+      const res = await fetch(`${this.ENDPOINT}?businessId=${encodeURIComponent(this.BUSINESS_ID)}`, { method: "GET" });
+      const data = await res.json();
+      const saved = data && data.savedState;
+      if (saved && Array.isArray(saved.history) && saved.history.length) {
+        this.history = saved.history;
+        const log = document.getElementById("chatLog");
+        log.innerHTML = "";
+        saved.history.forEach((m) => appendMessage(m.role === "model" ? "aion" : "user", m.text));
+        insertQuickActions();
+        AionMissionView.setFactsOnly(saved.facts || []);
+        if (saved.lastObjective) {
+          AionMissionView.update({
+            objective: saved.lastObjective,
+            understanding: null,
+            plan: saved.lastPlan || [],
+            executionState: saved.lastExecutionState || null,
+            savedFacts: saved.facts || []
+          });
+        }
+      } else {
+        onEmptyCallback();
+      }
+    } catch (e) {
+      onEmptyCallback();
+    }
+  },
   async send(message) {
     if (this.busy || !message.trim()) return;
     this.busy = true;
@@ -40,17 +66,11 @@ const AionBrain = {
       const res = await fetch(this.ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message,
-          businessId: this.BUSINESS_ID,
-          history: this.history.slice(0, -1)
-        })
+        body: JSON.stringify({ message, businessId: this.BUSINESS_ID, history: this.history.slice(0, -1) })
       });
       const data = await res.json();
       typingEl.remove();
       if (!res.ok || !data.ok) {
-        // Clean, client-safe error text only — full detail is in Netlify's
-        // function logs (console.error in Aion.js), never shown to the user.
         const errText = data && data.error ? data.error : "I hit a problem while working on that. Your work is safe.";
         appendMessage("error", errText);
         return;
@@ -67,7 +87,6 @@ const AionBrain = {
     }
   }
 };
-
 function appendMessage(role, text) {
   const log = document.getElementById("chatLog");
   const el = document.createElement("div");
@@ -77,7 +96,6 @@ function appendMessage(role, text) {
   log.scrollTop = log.scrollHeight;
   return el;
 }
-
 function appendTyping() {
   const log = document.getElementById("chatLog");
   const el = document.createElement("div");
@@ -87,7 +105,6 @@ function appendTyping() {
   log.scrollTop = log.scrollHeight;
   return el;
 }
-
 function setComposerBusy(isBusy) {
   document.getElementById("sendBtn").disabled = isBusy;
   document.getElementById("composerInput").disabled = isBusy;
